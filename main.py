@@ -16,9 +16,8 @@ def append(value):  # Cache_memory에 value를 추가한다. CACHE_SIZE까지만
         Cache_memory.append(value)
 
 
-CACHE_SIZE = 100
-CACHE_SIZE2 = 1000
-CACHE_SIZE3 = 10000  # cache size를 미리 정해준다.
+CACHE_SIZE = 10000
+  # cache size를 미리 정해준다.
 
 Hit_count =0
 Miss_count =0
