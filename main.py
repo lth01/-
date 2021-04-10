@@ -1,50 +1,87 @@
-# LRU Algorithm
+class Node:
+    def __init__(self,data,prev=None,next=None):
+        self.prev= prev
+        self.data= data
+        self.next= next
+class List:#node들을 관리해준다.
+    def find(self,head,map,val):
+        if(map.get(val)==None):
+            return -1
+        else:
+            return map.get(val)
 
-def find(value, queue):  # queue에서 value를 찾아본다. 대상이 있다면 index를 없다면 -1를 리턴한다.
-    if value in queue:
-        return queue.index(value)
-    else:
-        return -1
+    def update(self,head,map,val,count_map):#val을 찾아 첫번째 노드로 가져온다.
+        node=self.find(head,map,val)
+        if(node==-1): #노드가 없었다면
+            return -1
+        else:
+            if(node.next):
+                tmp_node=node.next
+                tmp_node.prev=node.prev
+                node.prev.next=tmp_node
+                #노드의 연결을 끊었으므로 head.next node로 설정한다.
+                tmp_node=head.next
+                head.next=node
+                node.prev=head
+                node.next=tmp_node
+                tmp_node.prev=node
+                if(count_map.get(val)==None):
+                    count_map[val]=1
+                else:
+                    count_map[val]+=1
 
+    def delete(self,head,tail,map):#해당 함수는 tail만 사용할 수 있다.
+        if(tail.next==None):
+            tmp_node=tail.prev
+            tail.prev=tmp_node.prev
+            tmp_node.prev.next=tail
+            del map[tmp_node.data]
+            head.data-=1
+        else:
+            print("is not tail node")
 
-def append(value):  # Cache_memory에 value를 추가한다. CACHE_SIZE까지만 된다.
-    global Cache_memory
-    if (len(Cache_memory) <= (CACHE_SIZE - 1)):
-        Cache_memory.append(value)
-    elif (len(Cache_memory) == (CACHE_SIZE)):  # queue size가 chach_size와 같다면(꽉 찼다면)
-        del Cache_memory[0]
-        Cache_memory.append(value)
+    def append(self,head,map,val):
+        if(map.get(val)==None):#해당 map에 노드가 없다면
+            node=Node(val)
+            map[val]=node
+        else:
+            node=map.get(val)
+        if(head.next!=None):
+            tmp_node=head.next
+            head.next=node
+            node.prev=head
+            node.next=tmp_node
+            tmp_node.prev=node
+            head.data+=1
 
+def _init(head,tail):
+    head.next=tail
+    head.prev=None
+    tail.prev=head
+    tail.next=None
 
-CACHE_SIZE = 10000
-  # cache size를 미리 정해준다.
+CACHE_SIZE=10000
+Cache_head=Node(0)
+Cache_tail=Node(-1)
 
-Hit_count =0
-Miss_count =0
-Cache_request = 0  # id 값을 불러와 임시적으로 저장할 변수
+_init(Cache_head,Cache_tail)
 
-Cache_memory = []  # global list
+list=List()
+map=dict() # key:node
+count_map=dict() #key:hit_count
 
-# for i in range(CACHE_SIZE):
-#     Hit_count[i]=0
-#     #Hit_count리스트를 초기화해준다.
-
-F = open("./request.tr", 'r')  # f라는 객체에 파일 request.tr을 일여놓는다.
+F = open("./request.txt", 'r')
 
 while(True):
-    Cache_request=F.readline()
+    Cache_request = F.readline()
     if not Cache_request:
-        break #""를 읽어오면 EOF이므로 종료한다.
+        break  # ""를 읽어오면 EOF이므로 종료한다.
     else:
-        Cache_request=int(Cache_request)#읽어온 str문자열을 정수로 바꾼다.
-    index=find(Cache_request, Cache_memory)
-    if(index>=0):#이미 캐시메모리 안에 해당 값이 있다면 그 값의 index=0으로한다 삭제 x
-        tmp=Cache_memory[index]
-        del Cache_memory[index]
-        append(tmp)
-        Hit_count+=1
-    else:#캐시메모리에 index가 존재하지 않는다면 Cache_memory의 첫번째 인덱스를 삭제하고, 맨 마지막에 값을 추가해준다.
-        append(Cache_request)
-        Miss_count+=1
+        Cache_request = int(Cache_request)  # 읽어온 str문자열을 정수로 바꾼다.
+    types=list.update(Cache_head,map,Cache_request,count_map)
+    if(type(types)==int): #읽어온 값이 없었다면
+        list.append(Cache_head,map,Cache_request)
+    if(Cache_head.data>CACHE_SIZE):
+        list.delete(Cache_head,Cache_tail,map)
 
-print("Hit Count:"+str(Hit_count)+"Miss Count:"+str(Miss_count))
+print(count_map.items())
