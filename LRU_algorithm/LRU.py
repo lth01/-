@@ -48,7 +48,11 @@ _init_Cache(Cache_head,Cache_tail)
 
 
 
+<<<<<<< HEAD:LRU_algorithm/LRU.py
 F = open("../../../Downloads/algorithm-master/request.tr", 'r')  # f라는 객체에 파일 request.tr을 일여놓는다.
+=======
+F = open("../../Downloads/algorithm-master/request.tr", 'r')  # f라는 객체에 파일 request.tr을 일여놓는다.
+>>>>>>> 5091f6c6a965aff9219838832d9ef3ffc1d3f43e:LRU.py
 
 while(True):
     Cache_request=F.readline()
