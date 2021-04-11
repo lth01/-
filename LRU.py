@@ -48,7 +48,7 @@ _init_Cache(Cache_head,Cache_tail)
 
 
 
-F = open("./request.tr", 'r')  # f라는 객체에 파일 request.tr을 일여놓는다.
+F = open("../../Downloads/algorithm-master/request.tr", 'r')  # f라는 객체에 파일 request.tr을 일여놓는다.
 
 while(True):
     Cache_request=F.readline()
