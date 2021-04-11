@@ -60,7 +60,7 @@ def _init(head,tail):
     tail.prev=head
     tail.next=None
 
-CACHE_SIZE=10000
+CACHE_SIZE=3
 Cache_head=Node(0)
 Cache_tail=Node(-1)
 
@@ -69,8 +69,12 @@ _init(Cache_head,Cache_tail)
 list=List()
 map=dict() # key:node
 count_map=dict() #key:hit_count
+total_count=0
+total_hit_count=0
+popular_values=-1
+index=0
+F = open("./request1.tr", 'r')
 
-F = open("./request.txt", 'r')
 
 while(True):
     Cache_request = F.readline()
@@ -78,10 +82,22 @@ while(True):
         break  # ""를 읽어오면 EOF이므로 종료한다.
     else:
         Cache_request = int(Cache_request)  # 읽어온 str문자열을 정수로 바꾼다.
+    total_count+=1
     types=list.update(Cache_head,map,Cache_request,count_map)
     if(type(types)==int): #읽어온 값이 없었다면
         list.append(Cache_head,map,Cache_request)
     if(Cache_head.data>CACHE_SIZE):
         list.delete(Cache_head,Cache_tail,map)
 
-print(count_map.items())
+for val in count_map.keys():
+    tmp=count_map.get(val)
+    if(popular_values<tmp):
+        popular_values=tmp
+        index=val#해당 맵의 키값저장
+    total_hit_count+=tmp
+
+print("Result of using LRU")
+print("Hit :",total_hit_count)
+print("Miss :",total_count-total_hit_count)
+print("Most popular data ID :",index)
+print("The number of hits for the most popular ID :",count_map.get(index))
